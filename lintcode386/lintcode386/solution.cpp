@@ -42,16 +42,4 @@ public:
 		
 	}
 };
-
-int main()
-{
-	Solution s;
-	string str("eceba");
-	int len = s.lengthOfLongestSubstringKDistinct(str, 3);
-
-	cout << len << endl;
-
-	return 0;
-}
-
 //End of File
