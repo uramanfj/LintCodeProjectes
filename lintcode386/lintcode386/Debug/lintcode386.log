@@ -1,0 +1,3 @@
+﻿  solution.cpp
+c:\vs_workspace\lintcode_git\lintcode386\lintcode386\solution.cpp(23): warning C4018: “<”: 有符号/无符号不匹配
+  lintcode386.vcxproj -> C:\VS_workspace\lintcode_git\lintcode386\Debug\lintcode386.exe
