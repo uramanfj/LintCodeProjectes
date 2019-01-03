@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "heap.h"
+#include "mapwindow.h"
 
 using namespace std;
 
@@ -17,7 +17,8 @@ public:
 		if (k == 0)
 			return 0;
 
-		heap h(k);
+		/* 原先使用heap，出现了问题，更新思路：单独使用map*/
+		mapwindow mw(s, k);
 
 		int substrStart = 0;	//当前子串开始下标
 		int maxLen = 0;			//统计过得最长子串长度
@@ -25,7 +26,7 @@ public:
 
 		for (int i = 0; i < s.length(); i++)
 		{
-			int ret = h.push(s[i], i);
+			int ret = mw.push(i);
 
 			if (ret != -1)	//即为窗口已经满了，创建了新的子串
 			{
@@ -34,11 +35,11 @@ public:
 				maxLen = (len > maxLen) ? len : maxLen;
 			}
 		}
-
 		//在string S的末尾有可能产生一个最长满足条件的子串，最后一个子串的验证:
 		len = s.length() - substrStart;
 
 		return (len > maxLen) ? len : maxLen;
+		
 	}
 };
 
