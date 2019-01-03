@@ -9,32 +9,38 @@
 
 using namespace std;
 
-/*记录每个元素最新出现时间*/
-typedef pair<char, int> ELEM;
-
 /* 使用堆来统计每个元素最新出现时间中最早的那个
  * 如果堆满，则弹出最早出现的那个，加入新的元素，并更新当前子串的信息
  */
 class heap
 {
 private:
-	const int capacity;	//窗口最大长度
-	int top;			//堆大小指针
-	vector<ELEM> buffer;
+	const int capacity;		//窗口最大长度
+	int top;				//堆大小指针
+	map<char, int> elem;	//存放当前窗口
+	vector<int> buffer;		//为了迅速找出最小值，一个堆用来存放elem中的key值
 
 	//堆顶元素
-	ELEM& peak()
+	inline int peak()
 	{
 		if (top < 1)
-			return buffer[0];
+			return -1;
 
-		return buffer[top];
+		return elem[buffer[top]];
 	}
 
 	//比较函数
-	inline bool cmp(int num1, int num2)
+	inline bool cmp(int index1, int index2)
 	{
-		return (buffer[num1].second < buffer[num2].second);
+		return (elem[buffer[index1]] < elem[buffer[index2]]);
+	}
+
+	inline void mySwap(int index1, int index2)
+	{
+		auto temp = buffer[index1];
+		buffer[index1] = buffer[index2];
+		buffer[index2] = temp;
+		return;
 	}
 
 	//上翻
@@ -60,7 +66,7 @@ private:
 			if (min == pare)
 				return;
 
-			buffer[pare].swap(buffer[min]);
+			mySwap(min, pare);
 
 			pare /= 2;
 		}
@@ -88,7 +94,7 @@ private:
 			if (min == pare)
 				return;
 
-			buffer[pare].swap(buffer[min]);
+			mySwap(min, pare);
 
 			pare = min;
 		}
@@ -98,43 +104,72 @@ public:
 	heap() :top(0), capacity(1), buffer(2)
 	{
 		//从buffer[1] 开始存储
-		buffer[0] = ELEM();
+		buffer[0] = -1;
 	}
 
 	heap(int num) :top(0), capacity(num), buffer(num + 1)
 	{
-		buffer[0] = ELEM();
+		buffer[0] = -1;
 	}
 
 	int bufferSize() { return top; }
 
-	ELEM pop()
+	int pop()
 	{
 		if (top < 1)
-			return ELEM();
+			return -1;
 
-		ELEM ret = peak();
+		auto keynum = buffer[1];
+		int ret = peak();
 		
 		buffer[1] = buffer[top--];
 		rollDown(1);
+
+		elem.erase(keynum);
 
 		return ret;
 	}
 
 	//push时，如果窗口未满，则直接加入窗口，如果窗口满了，则弹出堆顶
-	pair<bool, ELEM> push(ELEM& e)
+	int push(char keynum, int valnum)
 	{
+		//如果新push的元素为子串中重复出现的元素
+		auto it = elem.find(keynum);
+		if (it != elem.end())
+		{
+			it->second = valnum;
+			
+			for (int i = 1; i <= top; i++)
+			{
+				if (buffer[i] == it->first)
+				{
+					rollDown(i);
+					return -1;
+				}
+			}
+			return -1;	//这一句不会执行，因为如果在map中找到的元素，则堆中一定存在。写这个为了消warning
+		}
+
+		//新元素在子串中第一次出现，但当前窗口未满
 		if (top < capacity)
 		{
-			buffer[++top] = e;
+			elem[keynum] = valnum;
+			buffer[++top] = keynum;
 			rollUp(top);
-			return make_pair(false, peak());
+			return -1;
 		}
-		//else top == capacity
-		ELEM ret = peak();
-		buffer[1] = e;
+
+		//新元素为第一次出现元素，且当前窗口已经满了
+		int ret = peak();
+		auto mapkey = buffer[1];
+		elem[keynum] = valnum;
+
+		buffer[1] = keynum;
 		rollDown(1);
-		return make_pair(true, ret);
+
+		elem.erase(mapkey);
+
+		return ret;
 	}
 };
 #endif // !__HEAP_H__
