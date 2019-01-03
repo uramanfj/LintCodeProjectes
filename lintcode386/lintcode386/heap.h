@@ -98,12 +98,12 @@ public:
 	heap() :top(0), capacity(1), buffer(2)
 	{
 		//´Óbuffer[1] ¿ªÊ¼´æ´¢
-		buffer.push_back(ELEM());
+		buffer[0] = ELEM();
 	}
 
 	heap(int num) :top(0), capacity(num), buffer(num + 1)
 	{
-		buffer.push_back(ELEM());
+		buffer[0] = ELEM();
 	}
 
 	int bufferSize() { return top; }

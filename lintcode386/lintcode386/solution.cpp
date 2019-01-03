@@ -45,7 +45,7 @@ int main()
 {
 	Solution s;
 	string str("eceba");
-	int len = s.lengthOfLongestSubstringKDistinct(str, 4);
+	int len = s.lengthOfLongestSubstringKDistinct(str, 3);
 
 	cout << len << endl;
 
