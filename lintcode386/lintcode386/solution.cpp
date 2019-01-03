@@ -13,6 +13,10 @@ public:
 	 * @return: An integer
 	 */
 	int lengthOfLongestSubstringKDistinct(string &s, int k) {
+		//窗口长度为0
+		if (k == 0)
+			return 0;
+
 		heap h(k);
 
 		int substrStart = 0;	//当前子串开始下标
